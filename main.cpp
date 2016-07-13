@@ -80,6 +80,28 @@ int main() {
     std::cout << "Momentum 2 is k=("<< mom_mesh.points()[2][0] <<", "<< mom_mesh.points()[2][1]<<")"<<std::endl;
     std::cout << "Spin 1 is s="<<spins.points()[1]<<std::endl;
 
+    std::cout << "Suppose I want to know which momentum index corresponds to k=(pi,0)"<<std::endl;
+    boost::multi_array<double,2> target_mom(boost::extents[1][2]);
+    target_mom[0][0] = M_PI;
+    target_mom[0][1] = 0;
+    alps::gf::momentum_index target(-1);
+
+    for(alps::gf::momentum_index mom(0); mom<G.mesh2().extent(); mom++){
+        bool found = true;
+        for(int dim = 0; dim<G.mesh2().dimension(); dim++){
+            if(G.mesh2().points()[mom()][dim] != target_mom[0][dim]){
+                found = false;
+            }
+        }
+        if(found) target = mom;
+    }
+
+    std::cout<<"Momentum k=(pi,0) is at index "<<target()<<std::endl;
+    for(int dim = 0; dim<G.mesh2().dimension(); dim++){
+        std::cout<<G.mesh2().points()[target()][dim]<<"\t";
+    }
+    std::cout<<std::endl;
+
 
     return 0;
 }
